@@ -1,36 +1,105 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 问答箱 (MiniBox)
 
-## Getting Started
+A single-user Q&A Box web application built with Next.js, Tailwind CSS, shadcn/ui components, and PostgreSQL.
 
-First, run the development server:
+## Features
+
+- **Visitor**: Browse answered Q&A pairs, submit anonymous questions (with optional file attachments up to 10MB)
+- **Admin**: Login with a password, view unanswered questions, answer them (with optional attachments), delete questions
+
+## Tech Stack
+
+- **Framework**: Next.js 16 (App Router)
+- **Styling**: Tailwind CSS + custom shadcn/ui components
+- **Database**: PostgreSQL
+- **File Storage**: Local filesystem (`uploads/` directory)
+- **Auth**: iron-session (cookie-based sessions)
+
+## Setup
+
+### 1. Install dependencies
+
+```bash
+npm install
+```
+
+### 2. Set up PostgreSQL database
+
+Create a database and run the schema:
+
+```bash
+psql -U postgres -c "CREATE DATABASE minibox;"
+psql -U postgres -d minibox -f db/schema.sql
+```
+
+### 3. Configure environment variables
+
+Copy `.env.example` to `.env.local` and fill in the values:
+
+```bash
+cp .env.example .env.local
+```
+
+Edit `.env.local`:
+```env
+DATABASE_URL=postgresql://user:password@localhost:5432/minibox
+ADMIN_PASSWORD=your-secure-password
+SESSION_SECRET=your-random-secret-at-least-32-chars
+```
+
+### 4. Run the development server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 5. Build for production
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run build
+npm start
+```
 
-## Learn More
+## File Upload Storage
 
-To learn more about Next.js, take a look at the following resources:
+Uploaded files are stored in the `uploads/` directory at the project root. Ensure this directory is writable by the server process. The directory is created automatically on first upload.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+**Max file size**: 10MB per file. All file formats are accepted.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Admin Access
 
-## Deploy on Vercel
+Navigate to `/admin/login` to access the admin panel. Use the password set in `ADMIN_PASSWORD`.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## API Routes
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/api/questions` | Get all answered questions (public) |
+| POST | `/api/questions` | Submit a new question (public) |
+| POST | `/api/questions/[id]/answer` | Answer a question (admin) |
+| GET | `/api/admin/questions` | Get all unanswered questions (admin) |
+| DELETE | `/api/admin/questions/[id]` | Delete a question (admin) |
+| POST | `/api/auth/login` | Admin login |
+| POST | `/api/auth/logout` | Admin logout |
+| GET | `/api/uploads/[filename]` | Serve uploaded files |
+
+## Database Schema
+
+```sql
+CREATE TABLE IF NOT EXISTS questions (
+  id SERIAL PRIMARY KEY,
+  question_text TEXT NOT NULL,
+  question_attachment_url VARCHAR(500),
+  answer_text TEXT,
+  answer_attachment_url VARCHAR(500),
+  is_answered BOOLEAN DEFAULT FALSE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  answered_at TIMESTAMP WITH TIME ZONE
+);
+```
+
+---
+
+_Bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app)._

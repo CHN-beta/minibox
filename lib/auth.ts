@@ -5,26 +5,18 @@ export interface SessionData {
   isAdmin?: boolean
 }
 
-function getSessionOptions(): SessionOptions {
-  const sessionSecret = process.env.SESSION_SECRET
-  if (!sessionSecret && process.env.NODE_ENV === 'production') {
-    throw new Error('SESSION_SECRET environment variable is required in production')
+export function getSessionOptions(): SessionOptions {
+  const secret = process.env.SESSION_SECRET
+  if (!secret) {
+    throw new Error('SESSION_SECRET environment variable is not set')
   }
   return {
     cookieName: 'minibox-session',
-    password: sessionSecret || 'dev-only-secret-change-in-production-min-32-chars',
+    password: secret,
     cookieOptions: {
       secure: process.env.NODE_ENV === 'production',
     },
   }
-}
-
-export const sessionOptions: SessionOptions = {
-  cookieName: 'minibox-session',
-  password: process.env.SESSION_SECRET || 'dev-only-secret-change-in-production-min-32-chars',
-  cookieOptions: {
-    secure: process.env.NODE_ENV === 'production',
-  },
 }
 
 export async function getSession() {
