@@ -7,9 +7,9 @@
     "node": ">=20"
   },
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --port ${PORT:-3000}",
     "build": "next build",
-    "start": "next start",
+    "start": "next start --port ${PORT:-3000}",
     "lint": "eslint"
   },
   "dependencies": {

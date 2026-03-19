@@ -45,6 +45,7 @@ Edit `.env.local`:
 DATABASE_URL=postgresql://user:password@localhost:5432/minibox
 ADMIN_PASSWORD=your-secure-password
 SESSION_SECRET=your-random-secret-at-least-32-chars
+PORT=3000
 ```
 
 ### 4. Run the development server
@@ -53,7 +54,7 @@ SESSION_SECRET=your-random-secret-at-least-32-chars
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+Open [http://localhost:3000](http://localhost:3000) (or the port set via `PORT`).
 
 ### 5. Build for production
 
