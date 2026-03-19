@@ -29,8 +29,9 @@ Create a database and run the schema:
 
 ```bash
 psql -U postgres -c "CREATE DATABASE minibox;"
-psql -U postgres -d minibox -f db/schema.sql
 ```
+
+The `questions` table is created automatically on first startup.
 
 ### 3. Configure environment variables
 
